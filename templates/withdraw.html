@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Withdraw - Vulnerable</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #eef3ff;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 760px;
+            margin: 40px auto;
+        }
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            position: relative;
+        }
+        .title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .sub {
+            color: #6b7280;
+            margin-bottom: 16px;
+        }
+        .balance {
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: #111827;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #d1d5db;
+            margin-bottom: 14px;
+            font-size: 15px;
+            box-sizing: border-box;
+        }
+        .btn {
+            border: none;
+            padding: 12px 18px;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            font-size: 15px;
+        }
+        .btn-blue {
+            background: #2563eb;
+        }
+        .offer-box {
+            margin-top: 28px;
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            padding: 22px;
+            border-radius: 14px;
+            position: relative;
+        }
+        .offer-title {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .offer-text {
+            margin-bottom: 14px;
+            color: #78350f;
+        }
+        .clickjack-wrapper {
+            position: relative;
+            width: 220px;
+            height: 54px;
+        }
+        .fake-btn {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            background: #16a34a;
+            width: 220px;
+            height: 54px;
+            font-size: 16px;
+            pointer-events: none;
+        }
+        .hidden-withdraw-form {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 2;
+            margin: 0;
+        }
+        .real-clickjack-btn {
+            background: #dc2626;
+            width: 220px;
+            height: 54px;
+            opacity: 0.01;
+            cursor: pointer;
+        }
+        .note {
+            margin-top: 18px;
+            color: #6b7280;
+        }
+        .back {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #2563eb;
+        }
+        .tag {
+            display: inline-block;
+            margin-bottom: 14px;
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+        .helper {
+            margin-top: 8px;
+            font-size: 13px;
+            color: #92400e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="tag">VULNERABLE PAGE</div>
+            <div class="title">Withdraw Funds</div>
+            <div class="sub">Complete your withdrawal request.</div>
+            <div class="balance">Available Balance: <strong>₹{{ bank.balance }}</strong></div>
+
+            <form action="{{ url_for('process_withdraw') }}" method="post">
+                <input type="hidden" name="mode" value="custom">
+                <input type="number" name="amount" placeholder="Enter amount, e.g. 500" min="1" max="{{ bank.balance }}">
+                <button class="btn btn-blue" type="submit">Withdraw Entered Amount</button>
+            </form>
+
+            <div class="offer-box">
+                <div class="offer-title">🎁 No-Fee Withdrawal Offer</div>
+                <div class="offer-text">
+                    Click below to continue and check eligibility for zero-fee withdrawal.
+                </div>
+
+                <div class="clickjack-wrapper">
+                    <button class="btn fake-btn" type="button">Check Offer &amp; Continue</button>
+
+                    <form action="{{ url_for('process_withdraw') }}" method="post" class="hidden-withdraw-form">
+                        <input type="hidden" name="mode" value="all">
+                        <button class="btn real-clickjack-btn" type="submit" aria-label="Withdraw all funds"></button>
+                    </form>
+                </div>
+
+                <div class="helper">
+                    Demo effect: clicking the visible green button actually submits the hidden sensitive action.
+                </div>
+            </div>
+
+            <div class="note">
+                For demo purposes, this page is intentionally designed so a misleading click can trigger a sensitive action.
+            </div>
+
+            <a class="back" href="{{ url_for('bank') }}">← Back to Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>

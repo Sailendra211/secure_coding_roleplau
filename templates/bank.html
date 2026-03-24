@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Demo Bank</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 900px;
+            margin: 40px auto;
+        }
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+        .title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .balance {
+            font-size: 40px;
+            color: #0f8b4c;
+            margin: 10px 0 20px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: white;
+            background: #2563eb;
+            margin-right: 10px;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+        }
+        .btn-danger {
+            background: #dc2626;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+        }
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+        }
+        .note {
+            color: #6b7280;
+            margin-top: 10px;
+        }
+        .warning {
+            background: #fff7ed;
+            color: #9a3412;
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="title">Demo Bank Dashboard</div>
+            <div>Account Holder: <strong>{{ bank.account_name }}</strong></div>
+            <div class="balance">₹{{ bank.balance }}</div>
+
+            <a class="btn" href="{{ url_for('withdraw') }}">Withdraw</a>
+            <a class="btn" href="{{ url_for('withdraw_protected') }}">Protected Withdraw</a>
+
+            <form action="{{ url_for('reset') }}" method="post" style="display:inline;">
+                <button class="btn btn-danger" type="submit">Reset Demo</button>
+            </form>
+
+            <div class="warning">
+                Demo goal: from this normal bank page, go to the withdraw page and show how a misleading click can trigger a full withdrawal.
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="title" style="font-size:22px;">Recent Transactions</div>
+
+            {% if bank.transactions %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Action</th>
+                        <th>Amount</th>
+                        <th>Note</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tx in bank.transactions %}
+                    <tr>
+                        <td>{{ tx.time }}</td>
+                        <td>{{ tx.action }}</td>
+                        <td>₹{{ tx.amount }}</td>
+                        <td>{{ tx.note }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+                <p class="note">No transactions yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
